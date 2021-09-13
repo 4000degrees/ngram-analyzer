@@ -63,6 +63,10 @@
       vertical-align: top;
       margin: 0;
     }
+
+    #ngramView td:first-of-type:hover {
+      background: azure;
+    }
   </style>
 
 </head>
@@ -142,6 +146,18 @@
     const minCountInput = document.getElementById("minCountInput")
     const controls = document.getElementById("controls")
 
+    function copyToClipboard(text) {
+      let copyListener = event => {
+        document.removeEventListener("copy", copyListener, true);
+        event.preventDefault();
+        let clipboardData = event.clipboardData;
+        clipboardData.clearData();
+        clipboardData.setData("text/plain", text);
+      };
+      document.addEventListener("copy", copyListener, true);
+      document.execCommand("copy");
+    }
+
     function populateNgramTable(ngrams) {
       var minCount = minCountInput.value
       minCount = Number(minCount)
@@ -150,7 +166,7 @@
       var html = ''
       ngrams.forEach((item, i) => {
         if (item[1] >= minCount) {
-          html += `<tr><td>${item[0]}</td><td>${item[1]}</td></tr>`
+          html += `<tr><td onclick="copyToClipboard(this.innerText)">${item[0]}</td><td>${item[1]}</td></tr>`
         }
       });
       ngramView.innerHTML = html
